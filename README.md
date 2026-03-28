@@ -2,6 +2,8 @@
 
 AI-powered decision making through guided conversation. An intelligent agent that helps you make binary decisions by asking targeted questions and searching the web for relevant information.
 
+![Decision Agent Screenshot](public/screenshot.png)
+
 ## How It Works
 
 1. Enter two options you're deciding between (e.g., "MacBook Pro" vs "Dell XPS 15")
