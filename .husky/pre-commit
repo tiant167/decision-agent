@@ -1,0 +1,155 @@
+#!/bin/sh
+# Documentation Validation Pre-Commit Hook
+# This hook ensures documentation stays in sync with code
+
+echo "═══════════════════════════════════════════════════════════"
+echo "  Pre-Commit: Validating Documentation"
+echo "═══════════════════════════════════════════════════════════"
+echo ""
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Track if any checks failed
+FAILED=0
+
+# Function to check if file exists and is not empty
+check_file_exists() {
+    if [ ! -f "$1" ]; then
+        echo "${RED}✗ Missing: $1${NC}"
+        FAILED=1
+        return 1
+    fi
+
+    if [ ! -s "$1" ]; then
+        echo "${RED}✗ Empty: $1${NC}"
+        FAILED=1
+        return 1
+    fi
+
+    echo "${GREEN}✓ $1${NC}"
+    return 0
+}
+
+# Function to check if string exists in file
+check_string_in_file() {
+    if ! grep -q "$1" "$2" 2>/dev/null; then
+        echo "${YELLOW}⚠ Missing '$1' in $2${NC}"
+        return 1
+    fi
+    return 0
+}
+
+echo "→ Checking required documentation files..."
+echo ""
+
+# Core documentation files
+REQUIRED_DOCS=(
+    "decision-agent-app/AGENTS.md"
+    "decision-agent-app/docs/PLAN.md"
+    "decision-agent-app/docs/ARCHITECTURE.md"
+    "decision-agent-app/docs/DESIGN.md"
+    "decision-agent-app/docs/PITFALLS.md"
+    "decision-agent-app/docs/COMMON_MISTAKES.md"
+    "decision-agent-app/docs/GETTING_STARTED.md"
+    "decision-agent-app/docs/API_SPEC.md"
+    "decision-agent-app/docs/TESTING.md"
+    "decision-agent-app/docs/DEPLOYMENT.md"
+    "decision-agent-app/CONFIG.md"
+)
+
+for doc in "${REQUIRED_DOCS[@]}"; do
+    check_file_exists "$doc"
+done
+
+echo ""
+echo "→ Validating documentation content..."
+echo ""
+
+# Check AGENTS.md has navigation links
+echo "  Checking AGENTS.md navigation..."
+if check_file_exists "decision-agent-app/AGENTS.md"; then
+    check_string_in_file "ARCHITECTURE.md" "decision-agent-app/AGENTS.md"
+    check_string_in_file "PITFALLS.md" "decision-agent-app/AGENTS.md"
+    check_string_in_file "Model Name" "decision-agent-app/AGENTS.md"
+fi
+
+# Check PITFALLS.md has critical issues
+echo ""
+echo "  Checking PITFALLS.md critical issues..."
+if check_file_exists "decision-agent-app/docs/PITFALLS.md"; then
+    check_string_in_file "gemini-3.1-pro-preview" "decision-agent-app/docs/PITFALLS.md"
+    check_string_in_file "AsyncGenerator" "decision-agent-app/docs/PITFALLS.md"
+    check_string_in_file "Hydration" "decision-agent-app/docs/PITFALLS.md"
+fi
+
+# Check GETTING_STARTED.md has setup instructions
+echo ""
+echo "  Checking GETTING_STARTED.md setup..."
+if check_file_exists "decision-agent-app/docs/GETTING_STARTED.md"; then
+    check_string_in_file "npm install" "decision-agent-app/docs/GETTING_STARTED.md"
+    check_string_in_file "GEMINI_API_KEY" "decision-agent-app/docs/GETTING_STARTED.md"
+    check_string_in_file "npm run dev" "decision-agent-app/docs/GETTING_STARTED.md"
+fi
+
+# Check for code-documentation sync issues
+echo ""
+echo "→ Checking code-documentation sync..."
+echo ""
+
+# Verify model name in code matches documentation
+CODE_MODEL=$(grep -o 'model: "[^"]*"' decision-agent-app/lib/gemini.ts 2>/dev/null | head -1)
+DOC_MODEL=$(grep -o 'gemini-[^`]*' decision-agent-app/docs/PITFALLS.md 2>/dev/null | head -1)
+
+if [ -n "$CODE_MODEL" ] && [ -n "$DOC_MODEL" ]; then
+    if echo "$CODE_MODEL" | grep -q "gemini-3.1-pro-preview"; then
+        echo "${GREEN}✓ Model name consistent (gemini-3.1-pro-preview)${NC}"
+    else
+        echo "${YELLOW}⚠ Model name in code: $CODE_MODEL${NC}"
+        echo "${YELLOW}⚠ Expected: gemini-3.1-pro-preview${NC}"
+        FAILED=1
+    fi
+else
+    echo "${YELLOW}⚠ Could not verify model name consistency${NC}"
+fi
+
+# Check TypeScript compiles
+echo ""
+echo "→ Running TypeScript check..."
+echo ""
+
+cd decision-agent-app
+if npx tsc --noEmit 2>&1; then
+    echo "${GREEN}✓ TypeScript compilation passed${NC}"
+else
+    echo "${RED}✗ TypeScript compilation failed${NC}"
+    FAILED=1
+fi
+
+cd ..
+
+echo ""
+echo "═══════════════════════════════════════════════════════════"
+
+if [ $FAILED -eq 0 ]; then
+    echo "${GREEN}  Documentation validation PASSED${NC}"
+    echo "═══════════════════════════════════════════════════════════"
+    echo ""
+    exit 0
+else
+    echo "${RED}  Documentation validation FAILED${NC}"
+    echo "═══════════════════════════════════════════════════════════"
+    echo ""
+    echo "Please fix the issues above before committing."
+    echo ""
+    echo "Common fixes:"
+    echo "  - Update AGENTS.md if you added/removed docs"
+    echo "  - Update PITFALLS.md if you encountered new issues"
+    echo "  - Update API_SPEC.md if you changed the API"
+    echo "  - Run 'npx tsc --noEmit' to check TypeScript errors"
+    echo ""
+    exit 1
+fi
