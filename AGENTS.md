@@ -11,7 +11,7 @@ This document serves as a navigation hub for all project documentation.
 ## Quick Links
 
 ### For New Team Members (Read These First)
-1. [Project Goals](../PROJECT_GOALS.md) - What we're building and why
+1. [Project Goals](PROJECT_GOALS.md) - What we're building and why
 2. [Architecture Overview](docs/ARCHITECTURE.md) - System design and data flow
 3. [Getting Started](docs/GETTING_STARTED.md) - Setup and first run
 4. [Pitfalls & Lessons Learned](docs/PITFALLS.md) - Avoid these mistakes
@@ -24,7 +24,7 @@ This document serves as a navigation hub for all project documentation.
 - [Testing Guide](docs/TESTING.md) - How to test the application
 
 ### Configuration & Deployment
-- [Configuration Guide](../CONFIG.md) - Environment variables and settings
+- [Configuration Guide](CONFIG.md) - Environment variables and settings
 - [Deployment Guide](docs/DEPLOYMENT.md) - Deploy to Vercel
 
 ## Project Structure

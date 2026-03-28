@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test:api": "ts-node tests/api.test.ts",
     "docs:check": "node scripts/sync-docs.js",
-    "prepare": "cd .. && husky"
+    "prepare": "husky"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

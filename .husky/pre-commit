@@ -48,17 +48,17 @@ echo ""
 
 # Core documentation files
 REQUIRED_DOCS=(
-    "decision-agent-app/AGENTS.md"
-    "decision-agent-app/docs/PLAN.md"
-    "decision-agent-app/docs/ARCHITECTURE.md"
-    "decision-agent-app/docs/DESIGN.md"
-    "decision-agent-app/docs/PITFALLS.md"
-    "decision-agent-app/docs/COMMON_MISTAKES.md"
-    "decision-agent-app/docs/GETTING_STARTED.md"
-    "decision-agent-app/docs/API_SPEC.md"
-    "decision-agent-app/docs/TESTING.md"
-    "decision-agent-app/docs/DEPLOYMENT.md"
-    "decision-agent-app/CONFIG.md"
+    "AGENTS.md"
+    "docs/PLAN.md"
+    "docs/ARCHITECTURE.md"
+    "docs/DESIGN.md"
+    "docs/PITFALLS.md"
+    "docs/COMMON_MISTAKES.md"
+    "docs/GETTING_STARTED.md"
+    "docs/API_SPEC.md"
+    "docs/TESTING.md"
+    "docs/DEPLOYMENT.md"
+    "CONFIG.md"
 )
 
 for doc in "${REQUIRED_DOCS[@]}"; do
@@ -71,28 +71,28 @@ echo ""
 
 # Check AGENTS.md has navigation links
 echo "  Checking AGENTS.md navigation..."
-if check_file_exists "decision-agent-app/AGENTS.md"; then
-    check_string_in_file "ARCHITECTURE.md" "decision-agent-app/AGENTS.md"
-    check_string_in_file "PITFALLS.md" "decision-agent-app/AGENTS.md"
-    check_string_in_file "Model Name" "decision-agent-app/AGENTS.md"
+if check_file_exists "AGENTS.md"; then
+    check_string_in_file "ARCHITECTURE.md" "AGENTS.md"
+    check_string_in_file "PITFALLS.md" "AGENTS.md"
+    check_string_in_file "Model Name" "AGENTS.md"
 fi
 
 # Check PITFALLS.md has critical issues
 echo ""
 echo "  Checking PITFALLS.md critical issues..."
-if check_file_exists "decision-agent-app/docs/PITFALLS.md"; then
-    check_string_in_file "gemini-3.1-pro-preview" "decision-agent-app/docs/PITFALLS.md"
-    check_string_in_file "AsyncGenerator" "decision-agent-app/docs/PITFALLS.md"
-    check_string_in_file "Hydration" "decision-agent-app/docs/PITFALLS.md"
+if check_file_exists "docs/PITFALLS.md"; then
+    check_string_in_file "gemini-3.1-pro-preview" "docs/PITFALLS.md"
+    check_string_in_file "AsyncGenerator" "docs/PITFALLS.md"
+    check_string_in_file "Hydration" "docs/PITFALLS.md"
 fi
 
 # Check GETTING_STARTED.md has setup instructions
 echo ""
 echo "  Checking GETTING_STARTED.md setup..."
-if check_file_exists "decision-agent-app/docs/GETTING_STARTED.md"; then
-    check_string_in_file "npm install" "decision-agent-app/docs/GETTING_STARTED.md"
-    check_string_in_file "GEMINI_API_KEY" "decision-agent-app/docs/GETTING_STARTED.md"
-    check_string_in_file "npm run dev" "decision-agent-app/docs/GETTING_STARTED.md"
+if check_file_exists "docs/GETTING_STARTED.md"; then
+    check_string_in_file "npm install" "docs/GETTING_STARTED.md"
+    check_string_in_file "GEMINI_API_KEY" "docs/GETTING_STARTED.md"
+    check_string_in_file "npm run dev" "docs/GETTING_STARTED.md"
 fi
 
 # Check for code-documentation sync issues
@@ -101,8 +101,8 @@ echo "→ Checking code-documentation sync..."
 echo ""
 
 # Verify model name in code matches documentation
-CODE_MODEL=$(grep -o 'model: "[^"]*"' decision-agent-app/lib/gemini.ts 2>/dev/null | head -1)
-DOC_MODEL=$(grep -o 'gemini-[^`]*' decision-agent-app/docs/PITFALLS.md 2>/dev/null | head -1)
+CODE_MODEL=$(grep -o 'model: "[^"]*"' lib/gemini.ts 2>/dev/null | head -1)
+DOC_MODEL=$(grep -o 'gemini-[^`]*' docs/PITFALLS.md 2>/dev/null | head -1)
 
 if [ -n "$CODE_MODEL" ] && [ -n "$DOC_MODEL" ]; then
     if echo "$CODE_MODEL" | grep -q "gemini-3.1-pro-preview"; then
@@ -121,15 +121,12 @@ echo ""
 echo "→ Running TypeScript check..."
 echo ""
 
-cd decision-agent-app
 if npx tsc --noEmit 2>&1; then
     echo "${GREEN}✓ TypeScript compilation passed${NC}"
 else
     echo "${RED}✗ TypeScript compilation failed${NC}"
     FAILED=1
 fi
-
-cd ..
 
 echo ""
 echo "═══════════════════════════════════════════════════════════"
