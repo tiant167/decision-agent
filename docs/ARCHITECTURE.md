@@ -114,6 +114,7 @@ page.tsx (Root)
     │   │   ├── answer (user response)
     │   │   ├── final (decision)
     │   │   └── error (error message)
+    │   ├── Thinking Indicator (loading state)
     │   └──
     └── QuestionCard (active question only)
 ```

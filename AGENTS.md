@@ -99,16 +99,6 @@ Before making changes:
 4. Ensure TypeScript compiles: `npx tsc --noEmit`
 5. **Verify documentation is in sync**: `npm run docs:check`
 
-### Pre-Commit Hook
-
-This project has a pre-commit hook that automatically:
-- Checks all required documentation files exist
-- Validates documentation content is up-to-date
-- Verifies code-documentation sync (e.g., model names)
-- Runs TypeScript compilation check
-
-The hook runs automatically on every commit. If it fails, fix the issues before committing.
-
 ### Manual Documentation Check
 
 To check documentation sync manually:

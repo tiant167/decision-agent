@@ -175,7 +175,8 @@ Option A        Option B
 
 2. **Streaming**
    - Search shows animated spinner
-   - Thinking shows static icon
+   - Thinking shows spinning indigo icon with "Thinking..." pulse text
+   - Appears immediately when request is sent, disappears when first SSE event arrives
 
 3. **Question Waiting**
    - No loading indicator
@@ -235,6 +236,5 @@ Option A        Option B
 ## Future Design Considerations
 
 - **Animations**: Add fade-in for new messages
-- **Typing Indicator**: Show when AI is "thinking"
 - **Progress Bar**: Visual indicator of decision confidence
 - **Theme Toggle**: Explicit dark/light mode switch
