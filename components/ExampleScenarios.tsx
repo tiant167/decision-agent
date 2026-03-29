@@ -18,8 +18,11 @@ export function ExampleScenarios({ examples, onSelect }: ExampleScenariosProps) 
 
   return (
     <div className="mt-8">
-      <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-4">
-        Not sure what to choose? Try these examples:
+      <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-1">
+        🔥 Trending Today
+      </p>
+      <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-4">
+        Hot topics people are deciding on right now
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {examples.map((scenario) => (
@@ -38,6 +41,9 @@ export function ExampleScenarios({ examples, onSelect }: ExampleScenariosProps) 
             </span>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {scenario.title}
+            </span>
+            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center leading-tight line-clamp-2" title={`${scenario.optionA} vs ${scenario.optionB}`}>
+              {scenario.optionA} vs {scenario.optionB}
             </span>
           </button>
         ))}
