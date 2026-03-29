@@ -5,9 +5,17 @@ const CRON_SECRET = process.env.CRON_SECRET;
 
 /**
  * Cron job endpoint to update trending examples
- * Triggered by Vercel Cron or manual request with proper authorization
+ * Vercel Cron uses GET, manual triggers use POST with Bearer token
  */
+export async function GET(request: NextRequest) {
+  return handleCronRequest(request);
+}
+
 export async function POST(request: NextRequest) {
+  return handleCronRequest(request);
+}
+
+async function handleCronRequest(request: NextRequest) {
   // Verify authorization
   const authHeader = request.headers.get("Authorization");
   const expectedToken = `Bearer ${CRON_SECRET}`;
