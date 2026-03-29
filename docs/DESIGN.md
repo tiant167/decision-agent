@@ -14,12 +14,27 @@ The Decision Agent follows a **minimalist, focused** design approach:
 ┌─────────────────────────────────────────────────────────┐
 │  1. INPUT PHASE                                          │
 │  ┌─────────────────────────────────────────────────┐   │
-│  │  Which one should I [buy    ]?                  │   │
+│  │  Not sure what to choose? Try these examples:   │   │
+│  │  ┌─────┐ ┌──────┐ ┌────────┐ ┌───────────┐    │   │
+│  │  │ 🖥️  │ │ ✈️   │ │  🏃    │ │  📱       │    │   │
+│  │  │Buy  │ │Travel│ │Fitness │ │ New Phone │    │   │
+│  │  │Laptop│ │      │ │        │ │           │    │   │
+│  │  └─────┘ └──────┘ └────────┘ └───────────┘    │   │
 │  │                                                 │   │
-│  │  [MacBook Pro        ]  [Dell XPS 15      ]     │   │
-│  │  ─────────────────────VS─────────────────────   │   │
+│  │  What decision are you struggling with?        │   │
 │  │                                                 │   │
-│  │          [ Help Me Decide ]                     │   │
+│  │  What do you want to decide?                   │   │
+│  │  ┌────────────────────────────────────────┐    │   │
+│  │  │ buy, choose, use, learn, start...      │    │   │
+│  │  └────────────────────────────────────────┘    │   │
+│  │                                                 │   │
+│  │  Compare two options                           │   │
+│  │  ┌──────────────────┐  ┌──────────────────┐    │   │
+│  │  │ A MacBook Pro    │  │ B Dell XPS 15    │    │   │
+│  │  └──────────────────┘  └──────────────────┘    │   │
+│  │            ◯ VS ◯                               │   │
+│  │                                                 │   │
+│  │     [ 🚀 Start Smart Decision ]                 │   │
 │  └─────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
                             ↓
@@ -56,10 +71,12 @@ The Decision Agent follows a **minimalist, focused** design approach:
 
 | Usage | Light Mode | Dark Mode |
 |-------|-----------|-----------|
-| Background | `bg-gradient-to-b from-gray-50 to-white` | `dark:from-gray-900 dark:to-gray-800` |
+| Background | `bg-gradient-to-b from-gray-50 via-white to-gray-50` | `dark:from-gray-900 dark:via-gray-900 dark:to-gray-800` |
 | Card Background | `bg-white` | `dark:bg-gray-800` |
-| Primary Action | `bg-indigo-600` | Same |
-| Primary Hover | `bg-indigo-700` | Same |
+| Primary Action | `bg-gradient-to-r from-indigo-600 to-purple-600` | Same |
+| Primary Hover | `bg-gradient-to-r from-indigo-700 to-purple-700` | Same |
+| Title Gradient | `from-indigo-600 via-purple-600 to-pink-500` | Same |
+| VS Badge | `bg-gradient-to-br from-indigo-500 to-purple-600` | Same |
 | Success | `bg-emerald-50`, `border-emerald-200` | `dark:bg-emerald-900/20`, `dark:border-emerald-800` |
 | Search Info | `bg-blue-50`, `border-blue-100` | `dark:bg-blue-900/20`, `dark:border-blue-800` |
 | Question | `bg-purple-50`, `border-purple-200` | `dark:bg-purple-900/20`, `dark:border-purple-800` |
@@ -69,9 +86,11 @@ The Decision Agent follows a **minimalist, focused** design approach:
 
 ### Typography
 
-- **Font Family**: System default (Geist for headings via Next.js)
+- **Font Family**: Geist Sans (via next/font/google)
 - **Hierarchy**:
-  - H1: `text-3xl md:text-4xl font-bold`
+  - Logo/Icon: 80x80px with rounded-2xl gradient background
+  - H1: `text-4xl md:text-5xl font-bold` with gradient text (indigo → purple → pink)
+  - H2: `text-xl font-semibold` (form titles)
   - Card Labels: `text-sm font-medium`
   - Body: `text-sm` or default
   - Muted: `text-xs text-gray-500`
@@ -94,31 +113,72 @@ The Decision Agent follows a **minimalist, focused** design approach:
 
 ### InputForm
 
-**Layout Changes (Evolution):**
+**Layout:**
+```
+┌─────────────────────────────────────────────────┐
+│ What decision are you struggling with?          │
+│ Tell us your two options and let AI help you    │
+├─────────────────────────────────────────────────┤
+│ What do you want to decide?                     │
+│ ┌─────────────────────────────────────────┐     │
+│ │ buy, choose, use, learn, start...       │     │
+│ └─────────────────────────────────────────┘     │
+│ Enter a verb that describes your decision       │
+├─────────────────────────────────────────────────┤
+│ Compare two options                             │
+│ ┌────────────────────┐  ┌────────────────────┐  │
+│ │ ◯A e.g., MacBook   │  │ B◯ e.g., Dell XPS  │  │
+│ └────────────────────┘  └────────────────────┘  │
+│          ◯ VS ◯                                  │
+├─────────────────────────────────────────────────┤
+│     [ 🚀 Start Smart Decision ]                  │
+└─────────────────────────────────────────────────┘
+```
 
-Original:
+**Features:**
+- Form title and subtitle centered at top
+- Full-width verb input with descriptive placeholder
+- Side-by-side Option A/B inputs with circular badges (A/B)
+- Centered VS badge with gradient background
+- Gradient submit button with hover lift effect
+- All inputs have focus ring and shadow effects
+
+### ExampleScenarios
+
+**Layout:**
 ```
-Option A
----
-VS
----
-Option B
----
-Context (full sentence)
+Not sure what to choose? Try these examples:
+┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+│    🍿    │ │    📺    │ │    👓    │ │    💻    │
+│ Movie    │ │ Living   │ │ CES      │ │ Tech     │
+│ Night    │ │ Room Tech│ │ Gadgets  │ │ Upgrade  │
+└──────────┘ └──────────┘ └──────────┘ └──────────┘
 ```
 
-Current:
-```
-Which one should I [_______]?
+**Features:**
+- Examples are dynamically loaded from Edge Config (updated daily via cron)
+- Falls back to static examples if Edge Config is unavailable
+- 2x2 grid on mobile, 4-column on desktop
+- Emoji icons with hover scale effect
+- Card-style buttons with border and shadow
+- Hover: background change, border color change, lift effect
+- Clicking auto-fills the form below
 
-Option A        Option B
-[________]  VS  [________]
-```
+**Scenarios (dynamic, trending-based):**
+Examples rotate daily based on trending topics. Static fallback:
+| Icon | Title | Fills |
+|------|-------|-------|
+| 🖥️ | Buy Laptop | verb: buy, A: MacBook Pro, B: Windows Laptop |
+| ✈️ | Travel | verb: choose, A: Japan, B: Thailand |
+| 🏃 | Fitness | verb: start, A: Running, B: Gym |
+| 📱 | New Phone | verb: buy, A: iPhone, B: Android |
 
 **Rationale:**
-- Verb-first approach is more natural
-- Options side-by-side emphasizes comparison
-- Reduced cognitive load
+- Dynamic examples keep the homepage fresh and relevant
+- Positioned above form for immediate visibility
+- Reduces friction for first-time users
+- Shows expected input format through examples
+- One-click to start common decision scenarios
 
 ### ChatThread Header
 

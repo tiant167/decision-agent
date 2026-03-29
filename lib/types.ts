@@ -26,6 +26,16 @@ export interface DecisionInput {
   scenario: string;
 }
 
+// Example scenario for homepage
+export interface ExampleScenario {
+  id: string;
+  emoji: string;
+  title: string;
+  scenario: string;
+  optionA: string;
+  optionB: string;
+}
+
 // API Request body
 export interface DecisionRequest {
   optionA: string;

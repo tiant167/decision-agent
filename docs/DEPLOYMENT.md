@@ -10,7 +10,13 @@
 
 ### Step-by-Step Deployment
 
-#### 1. Login to Vercel
+#### 1. Create Edge Config
+
+1. Go to Vercel Dashboard → Storage → Edge Config
+2. Click "Create Edge Config"
+3. Copy the connection string (you'll need it for `EDGE_CONFIG`)
+
+#### 2. Login to Vercel
 
 ```bash
 vercel login
@@ -38,11 +44,17 @@ vercel
 4. Add:
    - `GEMINI_API_KEY` = your_key
    - `TAVILY_API_KEY` = your_key
+   - `EDGE_CONFIG` = your_edge_config_connection_string
+   - `VERCEL_TOKEN` = your_vercel_api_token
+   - `CRON_SECRET` = your_random_secret
 
 **Option B: Via CLI**
 ```bash
 vercel env add GEMINI_API_KEY
 vercel env add TAVILY_API_KEY
+vercel env add EDGE_CONFIG
+vercel env add VERCEL_TOKEN
+vercel env add CRON_SECRET
 ```
 
 #### 4. Redeploy
@@ -101,6 +113,9 @@ docker run -p 3000:3000 \
 |----------|----------|-------------|
 | `GEMINI_API_KEY` | Yes | Google Gemini API |
 | `TAVILY_API_KEY` | Yes | Tavily Search API |
+| `EDGE_CONFIG` | Recommended | Vercel Edge Config connection string |
+| `VERCEL_TOKEN` | If Edge Config | Vercel API token for writing to Edge Config |
+| `CRON_SECRET` | If Edge Config | Secret for securing cron endpoints |
 | `NODE_ENV` | Auto | Set to "production" |
 
 ### Security Checklist
@@ -109,6 +124,8 @@ docker run -p 3000:3000 \
 - [ ] `.env.local` is in `.gitignore`
 - [ ] No sensitive data in logs
 - [ ] HTTPS enabled (Vercel does this automatically)
+- [ ] gitleaks pre-commit hook installed (prevents credential leaks)
+- [ ] CRON_SECRET is set and used for cron endpoint auth
 
 ## Post-Deployment Verification
 

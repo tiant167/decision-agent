@@ -71,7 +71,8 @@ User Answer → Resume Stream
 - [x] Stream event handling
 
 ### Phase 4: Frontend Components ✓
-- [x] InputForm - Initial decision input
+- [x] InputForm - Initial decision input with redesigned layout
+- [x] ExampleScenarios - Quick-start templates (Buy Laptop, Travel, Fitness, New Phone)
 - [x] QuestionCard - Q&A interaction
 - [x] ChatThread - Message display
 - [x] MessageBubble - Individual messages
@@ -85,6 +86,18 @@ User Answer → Resume Stream
 - [x] UI styling (Tailwind)
 - [x] API integration tests
 - [x] Bug fixes
+
+### Phase 7: Dynamic Trending Examples ✓
+- [x] Edge Config integration for storing examples
+- [x] Examples generator (Tavily/DuckDuckGo search + Gemini generation)
+- [x] Cron API endpoint (`/api/cron/update-examples`)
+- [x] Vercel Cron configuration (daily at 9:00 UTC)
+- [x] Server Component page with Edge Config reads
+- [x] ClientHome extraction from page.tsx
+- [x] ExampleScenarios refactor (props-driven, no hardcoded data)
+- [x] Fallback to static examples when Edge Config unavailable
+- [x] Local test script (`npm run examples:test`)
+- [x] gitleaks pre-commit hook
 
 ## Key Technical Decisions
 
@@ -107,27 +120,37 @@ User Answer → Resume Stream
 ## File Structure
 
 ```
-decision-agent-app/
+decision-agent/
 ├── app/
-│   ├── api/decision/route.ts      # SSE API endpoint
-│   ├── layout.tsx
-│   ├── page.tsx
+│   ├── api/
+│   │   ├── decision/route.ts         # SSE API endpoint
+│   │   └── cron/update-examples/     # Cron: daily trending examples
+│   ├── layout.tsx                    # Root layout with favicon
+│   ├── page.tsx                      # Server Component (reads Edge Config)
 │   └── globals.css
 ├── components/
-│   ├── InputForm.tsx              # Initial form (verb + options)
-│   ├── QuestionCard.tsx           # Active question UI
-│   ├── ChatThread.tsx             # Message container
+│   ├── ClientHome.tsx                # Client-side home wrapper
+│   ├── InputForm.tsx                 # Initial form with A/B badges and VS indicator
+│   ├── ExampleScenarios.tsx          # Dynamic example grid (props-driven)
+│   ├── QuestionCard.tsx              # Active question UI
+│   ├── ChatThread.tsx                # Message container
 │   └── ...
 ├── hooks/
-│   └── useDecisionStream.ts       # Core logic + SSE handling
+│   └── useDecisionStream.ts          # Core logic + SSE handling
 ├── lib/
-│   ├── types.ts                   # All TypeScript types
-│   ├── gemini.ts                  # AI integration
-│   ├── tavily.ts                  # Primary search
-│   └── duckduckgo.ts              # Fallback search
+│   ├── types.ts                      # All TypeScript types
+│   ├── gemini.ts                     # AI integration
+│   ├── examples-generator.ts         # Trending examples generation
+│   ├── tavily.ts                     # Primary search
+│   └── duckduckgo.ts                 # Fallback search
+├── scripts/
+│   └── test-examples.ts              # Local test for example generation
 ├── tests/
-│   └── api.test.ts                # Integration tests
-└── docs/                          # Documentation
+│   └── api.test.ts                   # Integration tests
+├── public/
+│   └── icon.png                      # App icon and favicon
+├── vercel.json                       # Cron schedule
+└── docs/                             # Documentation
 ```
 
 ## Constraints
@@ -158,3 +181,5 @@ decision-agent-app/
 - Share decisions
 - Mobile app
 - Voice input
+- Personalized examples based on user click behavior
+- Multi-language examples based on browser locale

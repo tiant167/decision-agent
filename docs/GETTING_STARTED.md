@@ -14,7 +14,7 @@ Welcome to the Decision Agent project! This guide will get you up and running in
 
 ```bash
 git clone <repository-url>
-cd decision-agent/decision-agent-app
+cd decision-agent
 npm install
 ```
 
@@ -76,9 +76,11 @@ decision-agent-app/
 | File | Purpose |
 |------|---------|
 | `lib/gemini.ts` | AI integration (Gemini) |
+| `lib/examples-generator.ts` | Trending examples generation |
 | `lib/tavily.ts` | Search integration |
 | `hooks/useDecisionStream.ts` | Core state management |
-| `app/api/decision/route.ts` | API endpoint |
+| `app/api/decision/route.ts` | Decision API endpoint |
+| `app/api/cron/update-examples/route.ts` | Cron job endpoint |
 
 ## Development Workflow
 
@@ -107,15 +109,17 @@ npm run lint
 
 ```bash
 # Development
-npm run dev          # Start dev server
-npm run build        # Production build
-npm run start        # Start production server
+npm run dev            # Start dev server
+npm run build          # Production build
+npm run start          # Start production server
 
 # Testing
-npm run test:api     # Run API tests
+npm run test:api       # Run API tests
+npm run examples:test  # Test trending examples generation locally
 
 # Utilities
-npx tsc --noEmit     # Type check only
+npx tsc --noEmit       # Type check only
+npm run examples:update # Manually trigger example update (requires dev server)
 ```
 
 ## Troubleshooting
@@ -147,6 +151,9 @@ npx tsc --noEmit --project tsconfig.json
 |----------|----------|-------------|
 | `GEMINI_API_KEY` | Yes | Google Gemini API key |
 | `TAVILY_API_KEY` | Yes | Tavily search API key |
+| `EDGE_CONFIG` | No | Vercel Edge Config connection string (for trending examples) |
+| `VERCEL_TOKEN` | No | Vercel API token (for writing to Edge Config via cron) |
+| `CRON_SECRET` | No | Secret for securing cron endpoints |
 
 ## Next Steps
 

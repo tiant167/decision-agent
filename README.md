@@ -20,6 +20,8 @@ AI-powered decision making through guided conversation. An intelligent agent tha
 | Styling | Tailwind CSS 4 |
 | AI Model | Gemini 3.1 Pro |
 | Search | Tavily (primary), DuckDuckGo (fallback) |
+| Config Storage | Vercel Edge Config |
+| Scheduled Tasks | Vercel Cron Jobs |
 | Deployment | Vercel |
 
 ## Getting Started
@@ -49,10 +51,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 ## Available Scripts
 
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run test:api     # Run API integration tests
-npx tsc --noEmit     # Type check only
+npm run dev            # Start development server
+npm run build          # Build for production
+npm run test:api       # Run API integration tests
+npm run examples:test  # Test trending examples generation locally
+npx tsc --noEmit       # Type check only
 ```
 
 ## Documentation

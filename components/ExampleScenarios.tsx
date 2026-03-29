@@ -1,56 +1,13 @@
 "use client";
 
-import { DecisionInput } from "@/lib/types";
-
-interface ExampleScenario {
-  id: string;
-  emoji: string;
-  title: string;
-  scenario: string;
-  optionA: string;
-  optionB: string;
-}
-
-const scenarios: ExampleScenario[] = [
-  {
-    id: "1",
-    emoji: "🖥️",
-    title: "Buy Laptop",
-    scenario: "Which one should I buy",
-    optionA: "MacBook Pro",
-    optionB: "Windows Laptop",
-  },
-  {
-    id: "2",
-    emoji: "✈️",
-    title: "Travel",
-    scenario: "Which one should I choose",
-    optionA: "Japan",
-    optionB: "Thailand",
-  },
-  {
-    id: "3",
-    emoji: "🏃",
-    title: "Fitness",
-    scenario: "Which one should I start",
-    optionA: "Running",
-    optionB: "Gym",
-  },
-  {
-    id: "4",
-    emoji: "📱",
-    title: "New Phone",
-    scenario: "Which one should I buy",
-    optionA: "iPhone",
-    optionB: "Android",
-  },
-];
+import { DecisionInput, ExampleScenario } from "@/lib/types";
 
 interface ExampleScenariosProps {
+  examples: ExampleScenario[];
   onSelect: (input: DecisionInput) => void;
 }
 
-export function ExampleScenarios({ onSelect }: ExampleScenariosProps) {
+export function ExampleScenarios({ examples, onSelect }: ExampleScenariosProps) {
   const handleSelect = (scenario: ExampleScenario) => {
     onSelect({
       scenario: scenario.scenario,
@@ -65,7 +22,7 @@ export function ExampleScenarios({ onSelect }: ExampleScenariosProps) {
         Not sure what to choose? Try these examples:
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {scenarios.map((scenario) => (
+        {examples.map((scenario) => (
           <button
             key={scenario.id}
             onClick={() => handleSelect(scenario)}

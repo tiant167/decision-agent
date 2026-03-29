@@ -25,23 +25,32 @@ The Decision Agent is a single-page Next.js application that helps users make bi
 ┌────────────────────────────┼────────────────────────────────────┐
 │                     Server (Vercel Edge)                         │
 │                            ▼                                    │
-│              ┌─────────────────────────┐                        │
-│              │  POST /api/decision     │                        │
-│              │  (App Router API Route) │                        │
-│              └─────────────────────────┘                        │
-│                            │                                    │
-│                            ▼                                    │
-│              ┌─────────────────────────┐                        │
-│              │    Gemini 3.1 Pro       │                        │
-│              │    + Function Calling   │                        │
-│              └─────────────────────────┘                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  page.tsx (Server Component)                              │   │
+│  │  ┌────────────────┐   ┌────────────────────────────────┐ │   │
+│  │  │  Edge Config   │──▶│  ClientHome (Client Component) │ │   │
+│  │  │  (read only)   │   │  └─ ExampleScenarios           │ │   │
+│  │  └────────────────┘   └────────────────────────────────┘ │   │
+│  └──────────────────────────────────────────────────────────┘   │
 │                            │                                    │
 │              ┌─────────────┴─────────────┐                     │
 │              ▼                           ▼                     │
-│      ┌──────────────┐          ┌──────────────┐              │
-│      │    Tavily    │          │  DuckDuckGo  │              │
-│      │   Search     │          │   (Fallback) │              │
-│      └──────────────┘          └──────────────┘              │
+│    ┌───────────────────┐     ┌───────────────────────────┐    │
+│    │ POST /api/decision│     │ POST /api/cron/           │    │
+│    │ (Decision SSE)    │     │      update-examples      │    │
+│    └───────┬───────────┘     └───────────┬───────────────┘    │
+│            ▼                             │                     │
+│  ┌─────────────────┐                     ▼                     │
+│  │  Gemini 3.1 Pro │           ┌─────────────────────┐        │
+│  │  + Func Calling │           │ Tavily → DuckDuckGo │        │
+│  └────────┬────────┘           │ ↓ Gemini (generate) │        │
+│           │                    │ ↓ Edge Config (write)│        │
+│  ┌────┴──────┐                └─────────────────────┘         │
+│  ▼           ▼                                                  │
+│ ┌──────┐ ┌──────────┐                                         │
+│ │Tavily│ │DuckDuckGo│                                         │
+│ │Search│ │(Fallback)│                                         │
+│ └──────┘ └──────────┘                                         │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -95,28 +104,34 @@ Resume SSE stream with context
 ### Frontend Components
 
 ```
-page.tsx (Root)
-├── Header (static)
-├── InputForm (phase: idle)
-│   ├── verb input ("Which one should I ___")
-│   ├── Option A input
-│   └── Option B input
-│
-└── Chat View (phase: active)
-    ├── Progress (round/search count) - REMOVED
-    ├── ChatThread
-    │   ├── Header (Option A vs Option B)
-    │   ├── MessageBubble[]
-    │   │   ├── thought (AI reasoning)
-    │   │   ├── search (search indicator)
-    │   │   ├── search_result (results)
-    │   │   ├── question (Q&A history)
-    │   │   ├── answer (user response)
-    │   │   ├── final (decision)
-    │   │   └── error (error message)
-    │   ├── Thinking Indicator (loading state)
-    │   └──
-    └── QuestionCard (active question only)
+page.tsx (Server Component)
+├── Reads trending examples from Edge Config (with static fallback)
+└── ClientHome (Client Component)
+    ├── Header (static with AI-generated icon)
+    ├── ExampleScenarios (receives examples as prop)
+    │   └── ScenarioCard[] (dynamically loaded from Edge Config)
+    │
+    ├── InputForm (phase: idle)
+    │   ├── Form title and subtitle
+    │   ├── verb input ("What do you want to decide?")
+    │   ├── Option A input (with A badge)
+    │   ├── Option B input (with B badge)
+    │   └── VS badge (gradient)
+    │
+    └── Chat View (phase: active)
+        ├── ChatThread
+        │   ├── Header (Option A vs Option B)
+        │   ├── MessageBubble[]
+        │   │   ├── thought (AI reasoning)
+        │   │   ├── search (search indicator)
+        │   │   ├── search_result (results)
+        │   │   ├── question (Q&A history)
+        │   │   ├── answer (user response)
+        │   │   ├── final (decision)
+        │   │   └── error (error message)
+        │   ├── Thinking Indicator (loading state)
+        │   └──
+        └── QuestionCard (active question only)
 ```
 
 ### State Management
@@ -219,12 +234,33 @@ try {
 }
 ```
 
+### Cron API: `/api/cron/update-examples`
+
+**Method:** POST
+**Auth:** Vercel Cron (User-Agent) or Bearer token (CRON_SECRET)
+**Response:** application/json
+
+Updates homepage trending examples daily. See [CONFIG.md](../CONFIG.md) for setup.
+
+### Edge Config
+
+**Purpose:** Stores trending examples for zero-latency reads at the edge.
+
+**Key:** `trending-examples` → `ExampleScenario[]`
+
+**Write:** Via Vercel API from cron endpoint
+**Read:** Via `@vercel/edge-config` `get()` in server component
+
+**Fallback:** Static hardcoded examples if Edge Config unavailable
+
 ## Security Considerations
 
 1. **API Keys**: Stored in environment variables, never exposed to client
-2. **CORS**: Default Next.js behavior (same-origin)
-3. **Input Validation**: Zod validation on API requests
-4. **Rate Limiting**: Implicit via Vercel limits
+2. **Cron Auth**: CRON_SECRET validates manual triggers; Vercel Cron auto-authenticated
+3. **CORS**: Default Next.js behavior (same-origin)
+4. **Input Validation**: Zod validation on API requests
+5. **Rate Limiting**: Implicit via Vercel limits
+6. **Secret Scanning**: gitleaks pre-commit hook prevents credential leaks
 
 ## Performance Considerations
 

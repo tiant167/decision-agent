@@ -12,6 +12,9 @@ This project uses a combination of automated integration tests and manual testin
 # Run all API tests
 npm run test:api
 
+# Test trending examples generation locally
+npm run examples:test
+
 # Expected output:
 # ═══════════════════════════════════════════
 #   Decision Agent API Integration Tests

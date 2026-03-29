@@ -2,7 +2,7 @@
 
 ## Endpoint: `POST /api/decision`
 
-The main (and only) API endpoint for the Decision Agent.
+The main API endpoint for the Decision Agent's core decision-making flow.
 
 ### Request
 
@@ -199,7 +199,54 @@ Client                                          Server
 | Scenario length | N/A | No hard limit |
 | SSE timeout | 60s | Default Next.js timeout |
 
+---
+
+## Endpoint: `POST /api/cron/update-examples`
+
+Updates the trending examples stored in Vercel Edge Config. Called daily by Vercel Cron Jobs.
+
+### Authentication
+
+- **Vercel Cron**: Auto-authenticated via User-Agent header
+- **Manual**: Requires `Authorization: Bearer <CRON_SECRET>` header
+
+### Request
+
+**URL:** `/api/cron/update-examples`
+**Method:** `POST`
+
+No request body required.
+
+### Response
+
+**Success (200):**
+```json
+{
+  "success": true,
+  "updatedAt": "2026-03-29T09:00:00.000Z",
+  "examplesCount": 4,
+  "examples": ["Movie Night", "Living Room Tech", "CES Gadgets", "Tech Upgrade"]
+}
+```
+
+**Error Responses:**
+
+| Status | Condition |
+|--------|-----------|
+| 401 | Missing or invalid authorization |
+| 500 | Edge Config not configured or update failed |
+
 ### Testing with cURL
+
+**Manual trigger:**
+```bash
+curl -X POST http://localhost:3000/api/cron/update-examples \
+  -H "Authorization: Bearer $CRON_SECRET"
+```
+
+---
+
+### Testing the Decision API with cURL
 
 **Initial request:**
 
